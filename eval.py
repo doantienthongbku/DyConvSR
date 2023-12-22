@@ -9,7 +9,7 @@ from tqdm import tqdm
 from torchsummary import summary
 from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
-from model import LitRT4KSR_Rep
+from model import LitDyConvSR
 from utils import calculate_psnr, calculate_ssim, tensor2uint
 import config
 
@@ -19,12 +19,11 @@ hr_image_dir = config.eval_hr_image_dir
 save_path = config.val_save_path
 
 def main():
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu") \
-    #     if config.device == "auto" else torch.device(config.device)
-    device = torch.device("cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu") \
+        if config.device == "auto" else torch.device(config.device)
     print("Using device:", device)
     
-    litmodel = LitRT4KSR_Rep.load_from_checkpoint(
+    litmodel = LitDyConvSR.load_from_checkpoint(
         checkpoint_path=model_path,
         config=config,
         map_location=device

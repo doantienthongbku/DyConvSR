@@ -1,20 +1,19 @@
 import gradio as gr
 import torch
 from torchvision.transforms import functional as TF
+from PIL import Image
 
-from model import LitRT4KSR_Rep
-from utils import reparameterize
+from model import LitDyConvSR
+from utils import tensor2uint
 import config
 
 def RT4KSR_Generate(lr_image):
     print(f'device = {device}')
-    litmodel = LitRT4KSR_Rep.load_from_checkpoint(
-        checkpoint_path="checkpoints/RT4KSRRepXL-epoch=99-val_loss=0.0151-val_psnr=32.8121.ckpt",
+    litmodel = LitDyConvSR.load_from_checkpoint(
+        checkpoint_path="checkpoints/best.ckpt",
         config=config,
         map_location='cuda'
     )
-    if config.infer_reparameterize:
-        litmodel.model = reparameterize(config, litmodel.model, device, save_rep_checkpoint=False)
     litmodel.model.to(device)
     litmodel.eval()
     # make width and height divisible by 2
@@ -25,10 +24,12 @@ def RT4KSR_Generate(lr_image):
     
     lr_sample = TF.to_tensor(lr_image).unsqueeze(0).to(device)
     with torch.no_grad():
-        image_sr = litmodel.predict_step(lr_sample)
-    image_sr = image_sr.squeeze(0).cpu()
-    image_sr = TF.to_pil_image(image_sr)
-    return image_sr
+        sr_sample = litmodel.predict_step(lr_sample)
+        
+    sr_sample = tensor2uint(sr_sample * 255.0)
+    image_sr_PIL = Image.fromarray(sr_sample)
+    
+    return image_sr_PIL
 
 if __name__=='__main__':
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

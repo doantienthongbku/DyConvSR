@@ -59,6 +59,6 @@ infer_save_path = "results/infer"
 
 # Video inference configuration:
 checkpoint_path_video_infer = "checkpoints/best.ckpt"
-video_infer_video_path = "../videos/Rainforest_720.mp4"
+video_infer_video_path = "../videos/Rainforest_144.mp4"
 video_infer_save_path = "results/video"
 video_format = ".mp4"

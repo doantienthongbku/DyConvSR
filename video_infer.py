@@ -6,10 +6,9 @@ from PIL import Image
 import numpy as np
 import cv2
 from tqdm import tqdm
-from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
-from model import LitRT4KSR_Rep
-from utils import reparameterize, tensor2uint
+from model import LitDyConvSR
+from utils import tensor2uint
 import config
 
 model_path = config.checkpoint_path_video_infer
@@ -21,13 +20,11 @@ def main():
         if config.device == "auto" else torch.device(config.device)
     print("Using device:", device)
     
-    litmodel = LitRT4KSR_Rep.load_from_checkpoint(
+    litmodel = LitDyConvSR.load_from_checkpoint(
         checkpoint_path=model_path,
         config=config,
         map_location=device
     )
-    if config.video_infer_reparameterize:
-        litmodel.model = reparameterize(config, litmodel.model, device, save_rep_checkpoint=False)
     litmodel.model.to(device)
     litmodel.eval()
     

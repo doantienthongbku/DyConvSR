@@ -4,9 +4,8 @@ import torch
 from torchvision.transforms import functional as TF
 from PIL import Image
 import numpy as np
-from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
-from model import LitRT4KSR_Rep
+from model import LitDyConvSR
 from utils import tensor2uint
 import config
 
@@ -19,7 +18,7 @@ def main():
         if config.device == "auto" else torch.device(config.device)
     print("Using device:", device)
     
-    litmodel = LitRT4KSR_Rep.load_from_checkpoint(
+    litmodel = LitDyConvSR.load_from_checkpoint(
         checkpoint_path=model_path,
         config=config,
         map_location=device
@@ -41,7 +40,7 @@ def main():
         os.makedirs(save_path)
     image_sr_PIL.save(os.path.join(save_path, image_name))
     
-    print("Inference done.")
+    print("Inference done. The result is saved in", os.path.join(save_path, image_name))
     
 if __name__ == "__main__":
     main()
