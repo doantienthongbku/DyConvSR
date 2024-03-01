@@ -2,7 +2,7 @@
 
 ## Paper
 
-Comming soon ...
+The preprint version is availabel at [paper](dyconvsr_preprints.pdf)
 
 ## Installation
 Python = 3.8.10
